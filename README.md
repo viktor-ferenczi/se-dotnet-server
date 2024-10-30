@@ -29,8 +29,8 @@ busy server, then you **should not** use this repository in any way.
 The method described in this repository is completely unsupported
 by the game's developer. Use it only at your own risk.
 
-**Do not** report any bugs based on running the game this way,
-unless the exact same issue is reproducible in the original server.
+**Do not** report any bugs based on running the game this way, unless
+the exact same issue is reproducible with the original game server.
 
 If decompiling software for your own personal learning, research,
 testing or debugging purposes is against the law in your country,
@@ -41,11 +41,14 @@ limited to uploading it to publicly available source code repositories.
 
 ## Prerequisites
 
+- **Space Engineers Dedicated Server** installed via Steam
 - [.NET 8.0 SDK, Windows x64](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 - [JetBrains Rider](https://www.jetbrains.com/rider/) or Microsoft Visual Studio
-- [ILSpy]() version 8.2.0.7535 - Install by running `SetupILSpy.bat`
+- [ILSpy](https://github.com/icsharpcode/ILSpy) version 8.2.0.7535 - Install it by running `SetupILSpy.bat`
 - [Python 3.12](https://python.org) or newer
 - [Git](https://gitforwindows.org/) to create a **local** repository 
+
+If you installed the Dedicated Server at a custom path, then edit `LinkBin64.bat`.
 
 Make sure these executables are available on `PATH`:
 - `ilspycmd`
@@ -54,25 +57,16 @@ Make sure these executables are available on `PATH`:
 
 ## Usage
 
-1. Create a new git repository in an empty folder: `git init`
-2. Copy over all files from this repository (do **not** overwrite `.git`)
-3. Commit: `git add .` then `git commit -m "Initial"`
-4. Edit and run `LinkBin64.bat` to link the game's `Bin64` folder
-5. Decompile the game (10-20 minutes): `Decompile.bat`
-6. Commit: `git add .` then `git commit -m "Game Version"`
-7. Make the bulk fixes: `python FixBulk.py`
-8. Commit: `git add .` then `git commit -m "Bulk fixes"`
-9. Copy the `ReplicatedTypes.json` file into the `VRage` folder
-10. Commit: `git add .` then `git commit -m "Replicated types"`
-11. Apply the code patches (whitespace warnings are normal): `git apply -p1 --whitespace=fix Manual_fixes.patch`
-12. Commit: `git add .` then `git commit -m "Manual fixes"`
-13. Open the solution in your IDE
-14. Force a NuGet Restore for the whole solution
-15. Make a `Debug` build and run it
+Run `Prepare.bat`, it should take about 10-20 minutes to complete.
 
-The above steps have not been automated by a single script in order to 
-give greater control over the process and awareness of the version
-control involved, so you can revert and try again if needed.
+It should print `DONE` at the end. If it prints `FAILED`, then investigate
+the console output and try again. This script is designed to be retryable,
+but it requires reverting the working copy to the latest commit beforehand.
+
+You can then open and built the project in your C# IDE (Rider, Visual Studio).
+
+Alternatively you can build and run a `Release` build from the command line by
+executing the `BuildAndRun.bat` script. It should work without an IDE.
 
 _Enjoy!_
 
@@ -85,15 +79,6 @@ of code optimization, but still usable for development/research.
 Release builds are less debuggable due to code optimization, you
 may not be able to break the code everywhere and some variable
 values may not be observable.
-
-### Running from the command line
-
-You can build and run a `Release` build from the command line by
-executing the `BuildAndRun.bat` script. It should work without an IDE.
-
-The `BuildAndRunWithoutUI.bat` script will run the last opened world
-without the UI. You can do the same from you IDE by adding the
-`-noconsole` command line argument in your run configuration.
 
 ## Expected use cases
 
