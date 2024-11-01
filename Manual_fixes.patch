@@ -1,6 +1,6 @@
-From 0208b8794c53acfbb1cd82cea1998805afd2958f Mon Sep 17 00:00:00 2001
+From 06e12a5783e62b4e8f2fe6e7eefc6293eee7e96d Mon Sep 17 00:00:00 2001
 From: Viktor Ferenczi <viktor@ferenczi.eu>
-Date: Mon, 28 Oct 2024 23:09:43 +0100
+Date: Wed, 30 Oct 2024 15:49:46 +0100
 Subject: [PATCH] Manual fixes
 
 ---
@@ -35,7 +35,7 @@ Subject: [PATCH] Manual fixes
  .../Sandbox/Game/Screens/MyFilterBool.cs      |   2 -
  .../Game/Screens/MyGuiScreenMainMenuBase.cs   |   3 +-
  .../SessionComponents/MyHighlightSystem.cs    |   7 +-
- .../Sandbox/Game/Weapons/MyShipDrill.cs       |  14 +-
+ .../Sandbox/Game/Weapons/MyShipDrill.cs       |  12 +-
  .../Sandbox/Game/World/MyBlockLimits.cs       |   2 +-
  .../Sandbox/MyCommonProgramStartup.cs         |   1 +
  Sandbox.Game/Sandbox/MyInitializer.cs         |  13 +-
@@ -86,7 +86,7 @@ Subject: [PATCH] Manual fixes
  VRage.Math/VRageMath/GjkD.cs                  |   2 +-
  .../-CrtImplementationDetails-/Progress.cs    |   1 -
  .../-CrtImplementationDetails-/TriBool.cs     |   1 -
- VRage.NativeAftermath/-Module-.cs             | 134 +++++++++++-------
+ VRage.NativeAftermath/-Module-.cs             | 132 +++++++++++-------
  .../GFSDK_Aftermath_Device_Status.cs          |   1 -
  .../GFSDK_Aftermath_FeatureFlags.cs           |   1 -
  .../GFSDK_Aftermath_Result.cs                 |   1 -
@@ -104,6 +104,7 @@ Subject: [PATCH] Manual fixes
  .../VRage/Analytics/MyGameAnalytics.cs        |  13 +-
  .../Platform/Windows/Audio/MyPlatformAudio.cs |   2 +-
  .../Windows/Forms/MyMessageBoxCrashForm.cs    |   2 +-
+ .../Platform/Windows/MyCrashReporting.cs      |   6 +
  .../VRage/Platform/Windows/MyVRagePlatform.cs |   7 +-
  .../Windows/Render/MyPlatformRender.cs        |   2 +
  .../Windows/Serialization/DynamicTypeModel.cs |   2 +-
@@ -131,7 +132,7 @@ Subject: [PATCH] Manual fixes
  VRage/VRage/Serialization/StaticTypeModel.cs  |  34 -----
  .../VRage/Utils/Keen/MethodInfoExtensions.cs  |  15 ++
  VRage/VRage/Voxels/MyStorageData.cs           |   5 +
- 127 files changed, 589 insertions(+), 477 deletions(-)
+ 128 files changed, 593 insertions(+), 475 deletions(-)
  delete mode 100644 Sandbox.Game/app.config
  delete mode 100644 SpaceEngineersDedicated/SpaceEngineersDedicated/WindowsServiceInstaller.cs
  delete mode 100644 SpaceEngineersDedicated/app.config
@@ -187,7 +188,7 @@ index e423be0..1ffd034 100644
      <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
      <PackageReference Include="protobuf-net.Core" Version="3.0.131" />
 diff --git a/Sandbox.Game/Sandbox/Engine/Analytics/MySpaceAnalytics.cs b/Sandbox.Game/Sandbox/Engine/Analytics/MySpaceAnalytics.cs
-index 66d2970..c937d3c 100644
+index 66d2970..09a4eea 100644
 --- a/Sandbox.Game/Sandbox/Engine/Analytics/MySpaceAnalytics.cs
 +++ b/Sandbox.Game/Sandbox/Engine/Analytics/MySpaceAnalytics.cs
 @@ -403,6 +403,9 @@ public sealed class MySpaceAnalytics : MyAnalyticsManager
@@ -196,7 +197,7 @@ index 66d2970..c937d3c 100644
  	{
 +		// DISABLED ANALYTICS
 +		return;
-+		
++
  		if (!m_isSessionStarted)
  		{
  			if (m_hashedUserID == null)
@@ -243,14 +244,14 @@ index 6779f18..30c0269 100644
 +#pragma warning restore SYSLIB0011
 \ No newline at end of file
 diff --git a/Sandbox.Game/Sandbox/Engine/Utils/MyFakes.cs b/Sandbox.Game/Sandbox/Engine/Utils/MyFakes.cs
-index 521dc28..c7c1bd0 100644
+index 521dc28..9838705 100644
 --- a/Sandbox.Game/Sandbox/Engine/Utils/MyFakes.cs
 +++ b/Sandbox.Game/Sandbox/Engine/Utils/MyFakes.cs
 @@ -1323,7 +1323,11 @@ public static class MyFakes
  		ENABLE_WAIT_UNTIL_MULTIPLAYER_READY = true;
  		ENABLE_PRELOAD_CHARACTER_ANIMATIONS = true;
  		LOADING_STREAMING_TIMEOUT_ENABLED = true;
-+#if DEBUG		
++#if DEBUG
 +		ENABLE_MINIDUMP_SENDING = false;
 +#else
  		ENABLE_MINIDUMP_SENDING = true;
@@ -347,7 +348,7 @@ index d6ba7bc..297c64b 100644
  			{
  				RadioReceiver.Clear();
 diff --git a/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridShape.cs b/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridShape.cs
-index 88251a3..530110d 100644
+index 88251a3..fddc60d 100644
 --- a/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridShape.cs
 +++ b/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridShape.cs
 @@ -175,13 +175,15 @@ public class MyGridShape : IDisposable
@@ -355,7 +356,7 @@ index 88251a3..530110d 100644
  	private void AddShapesFromCollector()
  	{
 +		var shapes = new HkShape[255];
-+		
++
  		int num = 0;
  		for (int i = 0; i < m_blockCollector.ShapeInfos.Count; i++)
  		{
@@ -530,7 +531,7 @@ index 1b85014..a6a898e 100644
  		private class Sandbox_Game_GameSystems_CoordinateSystem_MyCoordinateSystem_003C_003EMyCreateCoordSysBuffer_003C_003EId_003C_003EAccessor : IMemberAccessor<MyCreateCoordSysBuffer, long>
  		{
 diff --git a/Sandbox.Game/Sandbox/Game/GameSystems/MyHeightMapLoadingSystem.cs b/Sandbox.Game/Sandbox/Game/GameSystems/MyHeightMapLoadingSystem.cs
-index cd2d35d..08f17f3 100644
+index cd2d35d..a80fb16 100644
 --- a/Sandbox.Game/Sandbox/Game/GameSystems/MyHeightMapLoadingSystem.cs
 +++ b/Sandbox.Game/Sandbox/Game/GameSystems/MyHeightMapLoadingSystem.cs
 @@ -76,6 +76,10 @@ public class MyHeightMapLoadingSystem : MySessionComponentBase
@@ -540,7 +541,7 @@ index cd2d35d..08f17f3 100644
 +		// The maps can already be set to null during unload
 +		if (maps == null)
 +			return;
-+		
++
  		lock (counter)
  		{
  			counter.TryGetValue(path, out var value);
@@ -697,7 +698,7 @@ index e77974e..e0b66f2 100644
  		private class Sandbox_Game_SessionComponents_MyHighlightSystem_003C_003EHighlightMsg_003C_003EData_003C_003EAccessor : IMemberAccessor<HighlightMsg, MyHighlightData>
  		{
 diff --git a/Sandbox.Game/Sandbox/Game/Weapons/MyShipDrill.cs b/Sandbox.Game/Sandbox/Game/Weapons/MyShipDrill.cs
-index 29b8128..925d602 100644
+index 29b8128..c776a33 100644
 --- a/Sandbox.Game/Sandbox/Game/Weapons/MyShipDrill.cs
 +++ b/Sandbox.Game/Sandbox/Game/Weapons/MyShipDrill.cs
 @@ -935,15 +935,7 @@ public class MyShipDrill : MyFunctionalBlock, IMyGunObject<MyToolBase>, IMyInven
@@ -709,14 +710,13 @@ index 29b8128..925d602 100644
 -	{
 -		return base.InventoryCount;
 -	}
--
++	[SpecialName] int IMyInventoryOwner.InventoryCount => base.InventoryCount;
+ 
 -	[SpecialName]
 -	bool IMyInventoryOwner.get_HasInventory()
 -	{
 -		return base.HasInventory;
 -	}
-+	[SpecialName] int IMyInventoryOwner.InventoryCount => base.InventoryCount;
-+	
 +	[SpecialName] bool IMyInventoryOwner.HasInventory => base.HasInventory;
  }
 diff --git a/Sandbox.Game/Sandbox/Game/World/MyBlockLimits.cs b/Sandbox.Game/Sandbox/Game/World/MyBlockLimits.cs
@@ -745,7 +745,7 @@ index bf2515f..c10c8eb 100644
  namespace Sandbox;
  
 diff --git a/Sandbox.Game/Sandbox/MyInitializer.cs b/Sandbox.Game/Sandbox/MyInitializer.cs
-index f36a905..8c24b6f 100644
+index f36a905..cadcbd5 100644
 --- a/Sandbox.Game/Sandbox/MyInitializer.cs
 +++ b/Sandbox.Game/Sandbox/MyInitializer.cs
 @@ -102,10 +102,7 @@ public static class MyInitializer
@@ -764,7 +764,7 @@ index f36a905..8c24b6f 100644
  		{
  			Thread.CurrentThread.Name = "Main thread";
  		}
-+		
++
 +#if !DEBUG
  		IMySimplifiedErrorReporter simplifiedErrorReporter = ErrorPlatform.TryToCreateSimplifiedErrorReporter(MyLog.Default);
  		if (simplifiedErrorReporter != null)
@@ -777,7 +777,7 @@ index f36a905..8c24b6f 100644
 +
  		Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
  		Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
-+		
++
  		if (MyFakes.ENABLE_MINIDUMP_SENDING && MyFileSystem.IsInitialized)
  		{
  			if (MyFakes.COLLECT_SUSPEND_DUMPS)
@@ -785,7 +785,7 @@ index f36a905..8c24b6f 100644
  			}
  			MyMiniDump.CleanupOldDumps();
  		}
-+		
++
 +#if !DEBUG
  		ErrorPlatform.CleanupCrashAnalytics();
  		MyErrorReporter.UpdateHangAnalytics();
@@ -958,7 +958,7 @@ index 66396eb..465fb4d 100644
  		protected class SpaceEngineers_Game_GUI_MyGuiScreenMedicals_003C_003EMyPlanetInfo_003C_003EPlanetId_003C_003EAccessor : IMemberAccessor<MyPlanetInfo, long>
  		{
 diff --git a/SpaceEngineers.Game/SpaceEngineers/Game/MySpaceGameCustomInitialization.cs b/SpaceEngineers.Game/SpaceEngineers/Game/MySpaceGameCustomInitialization.cs
-index 904808d..34a71f6 100644
+index 904808d..af06441 100644
 --- a/SpaceEngineers.Game/SpaceEngineers/Game/MySpaceGameCustomInitialization.cs
 +++ b/SpaceEngineers.Game/SpaceEngineers/Game/MySpaceGameCustomInitialization.cs
 @@ -4,6 +4,7 @@ using System.Collections.Immutable;
@@ -1012,7 +1012,7 @@ index 904808d..34a71f6 100644
 +		assemblyPaths.Add(Path.Combine(MyFileSystem.ExePath, "SpaceEngineers.Game.dll"));
 +		assemblyPaths.Add(Path.Combine(MyFileSystem.ExePath, "protobuf-net.Core.dll"));
 +		List<string> assemblyLocations = assemblyPaths;
-+		
++
  		Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
  		foreach (Assembly assembly in assemblies)
  		{
@@ -1025,7 +1025,7 @@ index 904808d..34a71f6 100644
  			}
  		}
 -		MyVRage.Platform.Scripting.Initialize(MySandboxGame.Static.UpdateThread, list2, new Type[14]
-+		
++
 +		MyVRage.Platform.Scripting.Initialize(MySandboxGame.Static.UpdateThread, assemblyLocations, new Type[]
  		{
  			typeof(MyTuple),
@@ -1036,15 +1036,15 @@ index 904808d..34a71f6 100644
  			typeof(SpaceEngineers.Game.ModAPI.Ingame.IMyAirVent),
 -			typeof(MySprite)
 +			typeof(MySprite),
-+			
++
 +			// Items moved from MyScriptCompiler's constructor
 +			GetType(),
 +			typeof(int),
-+			typeof(XmlEntity), 
-+			typeof(HashSet<>), 
++			typeof(XmlEntity),
++			typeof(HashSet<>),
 +			typeof(Dictionary<, >),
 +			typeof(Uri)
-+			
++
  		}, new string[6]
  		{
  			GetPrefixedBranchName(),
@@ -1119,7 +1119,7 @@ index a3d8330..9ef19c2 100644
  </Project>
 \ No newline at end of file
 diff --git a/SpaceEngineersDedicated/SpaceEngineersDedicated/MyProgram.cs b/SpaceEngineersDedicated/SpaceEngineersDedicated/MyProgram.cs
-index 06a572f..1693154 100644
+index 06a572f..88ecfa5 100644
 --- a/SpaceEngineersDedicated/SpaceEngineersDedicated/MyProgram.cs
 +++ b/SpaceEngineersDedicated/SpaceEngineersDedicated/MyProgram.cs
 @@ -1,5 +1,6 @@
@@ -1148,9 +1148,9 @@ index 06a572f..1693154 100644
 +		// Enabling BinaryFormatter. It will not work on .Net 9
 +		// See https://learn.microsoft.com/en-us/dotnet/standard/serialization/binaryformatter-security-guide
 +		AppContext.SetSwitch("System.Runtime.Serialization.EnableUnsafeBinaryFormatterSerialization", true);
-+		
++
 +		ReplicatedTypes.Load();
-+		
++
  		Sandbox.Engine.Platform.Game.IsDedicated = true;
  		SpaceEngineersGame.SetupBasicGameInfo();
  		SpaceEngineersGame.SetupPerGameSettings();
@@ -1378,7 +1378,7 @@ index e5acb7c..0517232 100644
  		{
  			MySpaceAnalytics.Instance.RegisterAnalyticsTracker(myAnalytics);
 diff --git a/VRage.Dedicated/VRage/Dedicated/MyConfigurator.cs b/VRage.Dedicated/VRage/Dedicated/MyConfigurator.cs
-index 83b408e..12836a0 100644
+index 83b408e..b2d7a26 100644
 --- a/VRage.Dedicated/VRage/Dedicated/MyConfigurator.cs
 +++ b/VRage.Dedicated/VRage/Dedicated/MyConfigurator.cs
 @@ -23,7 +23,7 @@ public static class MyConfigurator
@@ -1394,11 +1394,11 @@ index 83b408e..12836a0 100644
  			{
  				MyLog.Default.WriteLine("Service Name: " + text);
  			}
-+			
++
 +			/* Disabled the updater
  			PrepareUpdater(empty);
 +			*/
-+			
++
  			serverInstanceName = string.Empty;
  			MySandboxGame.Config = new MyConfig(MyPerServerSettings.GameNameSafe + ".cfg");
  			MySandboxGame.ConfigDedicated = new MyConfigDedicated<MyObjectBuilder_SessionSettings>(MyPerServerSettings.GameNameSafe + "-Dedicated.cfg");
@@ -1749,7 +1749,7 @@ index 66e4e02..913628a 100644
  	public bool IsValid => Value != 0;
  
 diff --git a/VRage.Game/VRage/ObjectBuilders/Private/MyObjectBuilderSerializerKeen.cs b/VRage.Game/VRage/ObjectBuilders/Private/MyObjectBuilderSerializerKeen.cs
-index 5ee612d..108bf55 100644
+index 5ee612d..70732dd 100644
 --- a/VRage.Game/VRage/ObjectBuilders/Private/MyObjectBuilderSerializerKeen.cs
 +++ b/VRage.Game/VRage/ObjectBuilders/Private/MyObjectBuilderSerializerKeen.cs
 @@ -37,7 +37,11 @@ public class MyObjectBuilderSerializerKeen
@@ -1760,7 +1760,7 @@ index 5ee612d..108bf55 100644
 +		// Crashed inside protobuf-net code inside calls to MyObjectBuilderSerializerKeen.Clone
  		ENABLE_PROTOBUFFERS_CLONING = true;
 +#endif
-+		
++
  		Dynamic = new MySerializeInfo(MyObjectFlags.Dynamic, MyPrimitiveFlags.None, 0, SerializeDynamic, null, null);
  		m_typeModel = MyVRage.Platform?.GetTypeModel();
  		Serializer = m_typeModel?.Model;
@@ -1814,7 +1814,7 @@ index defe55e..b7adab8 100644
      <ProjectReference Include="..\VRage.Network\VRage.Network.csproj" />
    </ItemGroup>
 diff --git a/VRage.Library/VRage/Filesystem/MyFileSystem.cs b/VRage.Library/VRage/Filesystem/MyFileSystem.cs
-index 2e351a5..ff4f239 100644
+index 2e351a5..8ae5c61 100644
 --- a/VRage.Library/VRage/Filesystem/MyFileSystem.cs
 +++ b/VRage.Library/VRage/Filesystem/MyFileSystem.cs
 @@ -15,7 +15,12 @@ public static class MyFileSystem
@@ -1826,7 +1826,7 @@ index 2e351a5..ff4f239 100644
 +	// Define the DEDICATED_SERVER_ROOT environment variable to point to there.
 +	// Usual value: C:\Program Files (x86)\Steam\steamapps\common\SpaceEngineersDedicatedServer
 +	private static string rootPath;
-+	public static string RootPath => rootPath ??= Environment.GetEnvironmentVariable("DEDICATED_SERVER_ROOT") ?? 
++	public static string RootPath => rootPath ??= Environment.GetEnvironmentVariable("DEDICATED_SERVER_ROOT") ??
 +	                                              (new FileInfo(ExePath).Directory?.FullName ?? Path.GetFullPath(ExePath));
  
  	private static string m_shadersBasePath;
@@ -1911,7 +1911,7 @@ index 7eef872..0e44592 100644
  {
  
 diff --git a/VRage.NativeAftermath/-Module-.cs b/VRage.NativeAftermath/-Module-.cs
-index 3bccc18..96509c4 100644
+index 3bccc18..5cbed10 100644
 --- a/VRage.NativeAftermath/-Module-.cs
 +++ b/VRage.NativeAftermath/-Module-.cs
 @@ -114,7 +114,7 @@ internal class _003CModule_003E
@@ -1923,21 +1923,21 @@ index 3bccc18..96509c4 100644
  
  	internal static _0024ArrayType_0024_0024_0024BY0A_0040P6AXXZ __xc_a/* Not supported: data(00) */;
  
-@@ -149,6 +149,14 @@ internal class _003CModule_003E
- 	{
+@@ -150,6 +150,14 @@ internal class _003CModule_003E
  		return new Guid(*(uint*)guid, *(ushort*)((ulong)(nint)guid + 4uL), *(ushort*)((ulong)(nint)guid + 6uL), *(byte*)((ulong)(nint)guid + 8uL), *(byte*)((ulong)(nint)guid + 9uL), *(byte*)((ulong)(nint)guid + 10uL), *(byte*)((ulong)(nint)guid + 11uL), *(byte*)((ulong)(nint)guid + 12uL), *(byte*)((ulong)(nint)guid + 13uL), *(byte*)((ulong)(nint)guid + 14uL), *(byte*)((ulong)(nint)guid + 15uL));
  	}
-+	
+ 
 +	// delegate* unmanaged[Cdecl, Cdecl]<IntPtr, IUnknown**, int>
 +	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 +	private unsafe delegate int IntPtrIUnknownToIntDelegate(IntPtr ptr, IUnknown** unk);
-+	
++
 +	// delegate* unmanaged[Cdecl, Cdecl]<IntPtr, uint>
 +	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 +	private delegate uint IntPtrToUintDelegate(IntPtr ptr);
- 
++
  	[SecurityCritical]
  	internal unsafe static int __get_default_appdomain(IUnknown** ppUnk)
+ 	{
 @@ -177,9 +185,12 @@ internal class _003CModule_003E
  		goto IL_0055;
  		IL_0036:
@@ -1958,34 +1958,32 @@ index 3bccc18..96509c4 100644
  	{
  		//IL_000d: Expected I, but got I8
 -		((delegate* unmanaged[Cdecl, Cdecl]<IntPtr, uint>)(*(ulong*)(*(long*)ppUnk + 16)))((nint)ppUnk);
-+		var num = *(ulong*)(*(long*)ppUnk + 16); 
++		var num = *(ulong*)(*(long*)ppUnk + 16);
 +		var fn = Marshal.GetDelegateForFunctionPointer<IntPtrToUintDelegate>((IntPtr)num);
 +		fn((nint)ppUnk);
  	}
  
  	[SecurityCritical]
-@@ -212,9 +225,25 @@ internal class _003CModule_003E
- 		Marshal.ThrowExceptionForHR(num);
+@@ -213,8 +226,24 @@ internal class _003CModule_003E
  		return null;
  	}
--
-+	
+ 
 +	// delegate* unmanaged[Cdecl, Cdecl]<void>*
 +	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-+	internal unsafe delegate void FunctionDelegate(); 
-+	
++	internal unsafe delegate void FunctionDelegate();
++
 +	// delegate* unmanaged[Cdecl, Cdecl]<int>*
 +	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-+	internal unsafe delegate int GetIntDelegate(); 
++	internal unsafe delegate int GetIntDelegate();
 +
 +	// delegate* unmanaged[Cdecl, Cdecl]<void *, int>*
 +	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-+	internal unsafe delegate int CallbackDelegate(void* p); 
-+	
++	internal unsafe delegate int CallbackDelegate(void* p);
++
 +	// delegate* unmanaged[Cdecl, Cdecl]<IntPtr, uint, delegate* unmanaged[Cdecl, Cdecl]<void*, int>, void*, int>
 +	[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-+	internal unsafe delegate int IntPtrUintCallbackVoidPtrToInt(IntPtr ptr, uint num, int **callback, void *voidPtr); 
-+	
++	internal unsafe delegate int IntPtrUintCallbackVoidPtrToInt(IntPtr ptr, uint num, int **callback, void *voidPtr);
++
  	[SecurityCritical]
 -	internal unsafe static void _003CCrtImplementationDetails_003E_002EDoCallBackInDefaultDomain(delegate* unmanaged[Cdecl, Cdecl]<void*, int> function, void* cookie)
 +	internal unsafe static void _003CCrtImplementationDetails_003E_002EDoCallBackInDefaultDomain(int** callbackFunction, void* cookie)
@@ -2078,7 +2076,7 @@ index 3bccc18..96509c4 100644
  		else
  		{
 -			((GCHandle)valueType).Target = value;
-+			var gcHandle = (GCHandle)valueType; 
++			var gcHandle = (GCHandle)valueType;
 +			gcHandle.Target = value;
  		}
  	}
@@ -2346,7 +2344,7 @@ index d8f27c5..1bedc12 100644
  	private long _003Calignment_0020member_003E;
  }
 diff --git a/VRage.NativeAftermath/NativeAftermath/MyAfterMath.cs b/VRage.NativeAftermath/NativeAftermath/MyAfterMath.cs
-index 52c6d9a..f737582 100644
+index 52c6d9a..752c6a3 100644
 --- a/VRage.NativeAftermath/NativeAftermath/MyAfterMath.cs
 +++ b/VRage.NativeAftermath/NativeAftermath/MyAfterMath.cs
 @@ -33,7 +33,8 @@ public class MyAfterMath
@@ -2355,7 +2353,7 @@ index 52c6d9a..f737582 100644
  			IntPtr value = default(IntPtr);
 -			System.Runtime.CompilerServices.Unsafe.SkipInit(out GFSDK_Aftermath_ContextHandle__* ptr);
 +			System.Runtime.CompilerServices.Unsafe.SkipInit(out IntPtr tmpPtr);
-+			GFSDK_Aftermath_ContextHandle__* ptr = (GFSDK_Aftermath_ContextHandle__*)tmpPtr; 
++			GFSDK_Aftermath_ContextHandle__* ptr = (GFSDK_Aftermath_ContextHandle__*)tmpPtr;
  			if (!m_markerTable.TryGetValue(marker, out value))
  			{
  				IntPtr intPtr = Marshal.StringToHGlobalAnsi(marker);
@@ -2502,6 +2500,41 @@ index 7f7501f..4141783 100644
  		{
  			MessageBox.Show("The content folder \"Content\" containing game assets is completely missing. Please verify integrity of game files using Steam. \n\n That is most likely the reason of the crash. As game cannot run without it.", "Content is missing", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
  		}
+diff --git a/VRage.Platform.Windows/VRage/Platform/Windows/MyCrashReporting.cs b/VRage.Platform.Windows/VRage/Platform/Windows/MyCrashReporting.cs
+index 12aa79f..d635d44 100644
+--- a/VRage.Platform.Windows/VRage/Platform/Windows/MyCrashReporting.cs
++++ b/VRage.Platform.Windows/VRage/Platform/Windows/MyCrashReporting.cs
+@@ -65,6 +65,8 @@ internal class MyCrashReporting : IMyCrashReporting
+ 
+ 	public void PrepareCrashAnalyticsReporting(string logPath, bool GDPRConsent, CrashInfo info, bool isUnsupportedGpu)
+ 	{
++// Crash reporting has been disabled
++#if DISABLED
+ 		string text = (isUnsupportedGpu ? "reporX" : "report");
+ 		ProcessStartInfo processStartInfo = new ProcessStartInfo();
+ 		processStartInfo.Arguments = "-" + text + " \"" + logPath + "\" \"" + info.GameName + "\" \"" + info.AppVersion + "\" \"" + info.AnalyticId + "\"";
+@@ -73,10 +75,13 @@ internal class MyCrashReporting : IMyCrashReporting
+ 		processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+ 		processStartInfo.RedirectStandardInput = true;
+ 		Process.Start(processStartInfo)?.StandardInput.Close();
++#endif
+ 	}
+ 
+ 	public bool ExtractCrashAnalyticsReport(string[] args, out string logPath, out CrashInfo info, out bool isUnsupportedGpu, out bool exitAfterReport)
+ 	{
++// Crash reporting has been disabled
++#if DISABLED
+ 		exitAfterReport = true;
+ 		for (int i = 0; i < 2; i++)
+ 		{
+@@ -100,6 +105,7 @@ internal class MyCrashReporting : IMyCrashReporting
+ 			}
+ 			return true;
+ 		}
++#endif
+ 		logPath = null;
+ 		info = default(CrashInfo);
+ 		isUnsupportedGpu = false;
 diff --git a/VRage.Platform.Windows/VRage/Platform/Windows/MyVRagePlatform.cs b/VRage.Platform.Windows/VRage/Platform/Windows/MyVRagePlatform.cs
 index b889da8..0a13f8b 100644
 --- a/VRage.Platform.Windows/VRage/Platform/Windows/MyVRagePlatform.cs
@@ -2561,7 +2594,7 @@ index e9c3c56..35b9e4e 100644
  		m_typeModel.UseImplicitZeroDefaults = false;
  	}
 diff --git a/VRage.Platform.Windows/VRage/Platform/Windows/Sys/MyWindowsSystem.cs b/VRage.Platform.Windows/VRage/Platform/Windows/Sys/MyWindowsSystem.cs
-index ee236e1..a0e177a 100644
+index ee236e1..33e451d 100644
 --- a/VRage.Platform.Windows/VRage/Platform/Windows/Sys/MyWindowsSystem.cs
 +++ b/VRage.Platform.Windows/VRage/Platform/Windows/Sys/MyWindowsSystem.cs
 @@ -173,6 +173,10 @@ internal sealed class MyWindowsSystem : IVRageSystem
@@ -2571,7 +2604,7 @@ index ee236e1..a0e177a 100644
 +		// Disabled due to:
 +		// System.Runtime.InteropServices.MarshalDirectiveException: Cannot marshal 'parameter #3': Cannot marshal a string by-value with the [Out] attribute.
 +		return "Windows";
-+		
++
  		string text = "";
  		try
  		{
@@ -2600,7 +2633,7 @@ index ee236e1..a0e177a 100644
  	{
 +		// Prevent crash due to broken C API binding
 +		return;
-+		
++
  		m_log.WriteLine("MyVideoModeManager.LogEnvironmentInformation - START");
  		m_log.IncreaseIndent();
  		try
@@ -2887,7 +2920,7 @@ index f007808..83a19dc 100644
  		MyScriptCompiler.Static.AddConditionalCompilationSymbols(symbols);
  		if (!string.IsNullOrEmpty(diagnosticsPath))
 diff --git a/VRage.Scripting/VRage/Scripting/Rewriters/PerfCountingRewriter.cs b/VRage.Scripting/VRage/Scripting/Rewriters/PerfCountingRewriter.cs
-index 8b559bb..9c6bafd 100644
+index 8b559bb..9e08dcc 100644
 --- a/VRage.Scripting/VRage/Scripting/Rewriters/PerfCountingRewriter.cs
 +++ b/VRage.Scripting/VRage/Scripting/Rewriters/PerfCountingRewriter.cs
 @@ -300,6 +300,10 @@ internal class PerfCountingRewriter : CSharpSyntaxRewriter
@@ -2897,7 +2930,7 @@ index 8b559bb..9c6bafd 100644
 +		// Disabled performance counting, otherwise mod compilation fails with repeated diagnostic error messages:
 +		// The type or namespace name 'CompilerMethods' does not exist in the namespace 'VRage.Scripting' (are you missing an assembly reference?)
 +		return syntaxTree;
-+		
++
  		SyntaxNode root = new PerfCountingRewriter(compilation, syntaxTree, modId).Visit(syntaxTree.GetRoot());
  		return syntaxTree.WithRootAndOptions(root, syntaxTree.Options);
  	}
@@ -3002,7 +3035,7 @@ index 5f8c1b6..28ec7ac 100644
  		Order = order;
  		Serialization = serializationMethod;
 diff --git a/VRage/VRage/Network/MyEventTable.cs b/VRage/VRage/Network/MyEventTable.cs
-index 1f1f256..1bc9606 100644
+index 1f1f256..6b7563c 100644
 --- a/VRage/VRage/Network/MyEventTable.cs
 +++ b/VRage/VRage/Network/MyEventTable.cs
 @@ -6,6 +6,8 @@ using System.Linq.Expressions;
@@ -3040,7 +3073,7 @@ index 1f1f256..1bc9606 100644
 +			{
 +				throw new Exception($"Cannot find replication event ID for method: {methodSignature}");
 +			}
-+			
++
  			CallSite callSite = (CallSite)m_createCallSite.MakeGenericMethod(array).Invoke(this, new object[2]
  			{
  				method,
@@ -3050,7 +3083,7 @@ index 1f1f256..1bc9606 100644
  			if ((callSite.HasBroadcastExceptFlag ? 1 : 0) + (callSite.HasBroadcastFlag ? 1 : 0) + (callSite.HasClientFlag ? 1 : 0) > 1)
  			{
 diff --git a/VRage/VRage/Network/MySynchronizedTypeInfo.cs b/VRage/VRage/Network/MySynchronizedTypeInfo.cs
-index 505137e..4a6efb8 100644
+index 505137e..e46287a 100644
 --- a/VRage/VRage/Network/MySynchronizedTypeInfo.cs
 +++ b/VRage/VRage/Network/MySynchronizedTypeInfo.cs
 @@ -28,7 +28,9 @@ public class MySynchronizedTypeInfo
@@ -3059,7 +3092,7 @@ index 505137e..4a6efb8 100644
  		TypeId = id;
 -		TypeHash = GetHashFromType(type);
 +		// We must use the type hash from the original game, because they are used to reorder the type table
-+		// to have the same order as the server's type table while joining a multiplayer game as a client 
++		// to have the same order as the server's type table while joining a multiplayer game as a client
 +		TypeHash = ReplicatedTypes.TypeHashByTypeId[id]; // GetHashFromType(type);
  		TypeName = type.Name;
  		FullTypeName = type.FullName;
@@ -3076,7 +3109,7 @@ index 505137e..4a6efb8 100644
 +	*/
  }
 diff --git a/VRage/VRage/Network/MyTypeTable.cs b/VRage/VRage/Network/MyTypeTable.cs
-index 4760595..72851b7 100644
+index 4760595..8899e3c 100644
 --- a/VRage/VRage/Network/MyTypeTable.cs
 +++ b/VRage/VRage/Network/MyTypeTable.cs
 @@ -54,8 +54,19 @@ public class MyTypeTable
@@ -3085,12 +3118,12 @@ index 4760595..72851b7 100644
  			{
 -				value = new MySynchronizedTypeInfo(type, new TypeId((uint)m_idToType.Count), mySynchronizedTypeInfo, flag);
 -				m_idToType.Add(value);
-+				// Determine the type ID as it was recorded from the original game 
++				// Determine the type ID as it was recorded from the original game
 +				if (!ReplicatedTypes.TypeIdByFullName.TryGetValue(type.FullName ?? "N/A", out var typeId))
 +				{
 +					throw new Exception($"Cannot find replication type ID by full type name: {type.FullName}");
 +				}
-+				
++
 +				value = new MySynchronizedTypeInfo(type, new TypeId(typeId), mySynchronizedTypeInfo, flag);
 +				var minLen = typeId + 1;
 +				while (m_idToType.Count < minLen)
@@ -3109,7 +3142,7 @@ index 4760595..72851b7 100644
 +			// these two items are present in the type table on .NET Framework 4.8
 +			if (type.FullName == "System.Delegate" || type.FullName == "System.MulticastDelegate")
 +				return true;
-+			
++
  			return typeof(MulticastDelegate).IsAssignableFrom(type.BaseType);
  		}
  		return true;
@@ -3117,20 +3150,20 @@ index 4760595..72851b7 100644
  			}
  			return;
  		}
-+		
++
  		int num = (int)stream.ReadUInt32Variant();
  		if (m_idToType.Count != num)
  		{
 -			MyLog.Default.WriteLine($"Bad number of types from server. Recieved {num}, have {m_idToType.Count}");
-+			// This is a fatal error condition, because of m_idToType[j] in the logic below 
++			// This is a fatal error condition, because of m_idToType[j] in the logic below
 +			throw new Exception($"Bad number of types from server. Receieved {num}, have {m_idToType.Count}");
- 		}
++		}
 +
 +		for (var i = 0; i < num; i++)
 +		{
 +			m_idToType[i] = null;
-+		}
-+		
+ 		}
++
  		m_staticEventTable = new MyEventTable(null);
  		for (int j = 0; j < num; j++)
  		{
@@ -3144,7 +3177,7 @@ index 4760595..72851b7 100644
  			m_idToType[j] = mySynchronizedTypeInfo;
  			m_staticEventTable.AddStaticEvents(mySynchronizedTypeInfo.Type);
  		}
-+		
++
 +		for (var i = 0; i < num; i++)
 +		{
 +			if (m_idToType[i] == null)
@@ -3156,7 +3189,7 @@ index 4760595..72851b7 100644
  }
 diff --git a/VRage/VRage/Network/ReplicatedTypes.cs b/VRage/VRage/Network/ReplicatedTypes.cs
 new file mode 100644
-index 0000000..6f499c1
+index 0000000..d4d0688
 --- /dev/null
 +++ b/VRage/VRage/Network/ReplicatedTypes.cs
 @@ -0,0 +1,69 @@
@@ -3170,7 +3203,7 @@ index 0000000..6f499c1
 +public static class ReplicatedTypes
 +{
 +    public const uint Static = 0xffffu;
-+    
++
 +    public class ReplicationTypeInfo
 +    {
 +        public uint TypeId { get; set; }
