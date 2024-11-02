@@ -12,6 +12,8 @@ This repository provides a way to decompile the Dedicated Server into C# 11.0 so
 code in several projects, combined into a single solution. It also 
 contains a script and patches to fix the code to run on .NET 8.0.
 
+See also: [Torch Server on .NET 8.0](https://github.com/viktor-ferenczi/se-dotnet-torch)
+
 ## Legal
 
 _Space Engineers is a trademark of Keen Software House s.r.o._
@@ -90,9 +92,8 @@ the code and even change it at runtime. You can see all variable values
 and can break the code anywhere if you run a `Debug` build.
 
 **Prototyping plugins** by directly changing the game's source code. Once it
-works and tested, it can be turned into a plugin usable on Plugin Loader. 
-Combined with publicizer support (yet to be accepted to PL) it can be a 
-powerful way to develop new plugins.
+works and tested, it can be turned into a Torch plugin. Combined with
+publicizer support it would be a powerful way to develop new plugins.
 
 **Server hosting** with better performance, especially if you want to make
 custom code changes which are not available via plugins.
