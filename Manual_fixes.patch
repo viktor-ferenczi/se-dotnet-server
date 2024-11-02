@@ -1,4 +1,4 @@
-From 06e12a5783e62b4e8f2fe6e7eefc6293eee7e96d Mon Sep 17 00:00:00 2001
+From 1250b288d3437542604162d99163f991b4f277f9 Mon Sep 17 00:00:00 2001
 From: Viktor Ferenczi <viktor@ferenczi.eu>
 Date: Wed, 30 Oct 2024 15:49:46 +0100
 Subject: [PATCH] Manual fixes
@@ -16,6 +16,7 @@ Subject: [PATCH] Manual fixes
  .../Game/Entities/Blocks/MyContractBlock.cs   |   8 +-
  .../Entities/Blocks/MyTargetDummyBlock.cs     |  12 +-
  .../Game/Entities/Character/MyCharacter.cs    |   2 +-
+ .../Game/Entities/Cube/MyGridClipboard.cs     |   2 +-
  .../Sandbox/Game/Entities/Cube/MyGridShape.cs |   4 +-
  .../Sandbox/Game/Entities/Cube/MySlimBlock.cs |   8 +-
  .../Sandbox/Game/Entities/MyCubeBuilder.cs    |   6 +-
@@ -132,7 +133,7 @@ Subject: [PATCH] Manual fixes
  VRage/VRage/Serialization/StaticTypeModel.cs  |  34 -----
  .../VRage/Utils/Keen/MethodInfoExtensions.cs  |  15 ++
  VRage/VRage/Voxels/MyStorageData.cs           |   5 +
- 128 files changed, 593 insertions(+), 475 deletions(-)
+ 129 files changed, 594 insertions(+), 476 deletions(-)
  delete mode 100644 Sandbox.Game/app.config
  delete mode 100644 SpaceEngineersDedicated/SpaceEngineersDedicated/WindowsServiceInstaller.cs
  delete mode 100644 SpaceEngineersDedicated/app.config
@@ -347,6 +348,19 @@ index d6ba7bc..297c64b 100644
  			if (!base.Closed)
  			{
  				RadioReceiver.Clear();
+diff --git a/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridClipboard.cs b/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridClipboard.cs
+index fa23f84..78683cd 100644
+--- a/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridClipboard.cs
++++ b/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridClipboard.cs
+@@ -521,7 +521,7 @@ public class MyGridClipboard
+ 		{
+ 			deactivated?.Invoke(this, afterPaste);
+ 		}
+-		if (MyClipboardComponent.Static.Clipboard == this)
++		if (MyClipboardComponent.Static?.Clipboard == this)
+ 		{
+ 			if (MyCoordinateSystem.Static != null)
+ 			{
 diff --git a/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridShape.cs b/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridShape.cs
 index 88251a3..fddc60d 100644
 --- a/Sandbox.Game/Sandbox/Game/Entities/Cube/MyGridShape.cs
