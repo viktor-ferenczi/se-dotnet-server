@@ -1,4 +1,4 @@
-From 1250b288d3437542604162d99163f991b4f277f9 Mon Sep 17 00:00:00 2001
+From 641769894f3f3e5fda4a7f26b17d8dc951e4584b Mon Sep 17 00:00:00 2001
 From: Viktor Ferenczi <viktor@ferenczi.eu>
 Date: Wed, 30 Oct 2024 15:49:46 +0100
 Subject: [PATCH] Manual fixes
@@ -51,13 +51,13 @@ Subject: [PATCH] Manual fixes
  .../SpaceEngineers/Game/SpaceEngineersGame.cs |   4 +
  .../Game/World/MySpaceRespawnComponent.cs     |   2 +-
  .../MyObjectBuilder_AutomaticRifle.cs         |   4 +-
- .../SpaceEngineersDedicated.csproj            |   4 +
+ .../SpaceEngineersDedicated.csproj            |   5 +
  .../SpaceEngineersDedicated/MyProgram.cs      |  12 ++
  .../WindowsServiceInstaller.cs                |  53 -------
  SpaceEngineersDedicated/app.config            |  21 ---
  SpaceEngineersDedicated/steam_appid.txt       |   1 +
  VRage.Audio/VRage/Audio/MyXAudio2.cs          |   2 +-
- VRage.Dedicated/VRage.Dedicated.csproj        |   4 +-
+ VRage.Dedicated/VRage.Dedicated.csproj        |   5 +-
  VRage.Dedicated/VRage/Dedicated/ConfigForm.cs |  10 +-
  .../Configurator/PluginManagementControl.cs   |   1 +
  .../VRage/Dedicated/DedicatedServer.cs        |  10 +-
@@ -101,7 +101,7 @@ Subject: [PATCH] Manual fixes
  .../VRage.NativeAftermath.csproj              |   5 +-
  .../__scrt_native_startup_state.cs            |   1 -
  .../{gcroot-System => gcroot_System.cs}       |   0
- .../VRage.Platform.Windows.csproj             |   3 +-
+ .../VRage.Platform.Windows.csproj             |   4 +-
  .../VRage/Analytics/MyGameAnalytics.cs        |  13 +-
  .../Platform/Windows/Audio/MyPlatformAudio.cs |   2 +-
  .../Windows/Forms/MyMessageBoxCrashForm.cs    |   2 +-
@@ -133,7 +133,7 @@ Subject: [PATCH] Manual fixes
  VRage/VRage/Serialization/StaticTypeModel.cs  |  34 -----
  .../VRage/Utils/Keen/MethodInfoExtensions.cs  |  15 ++
  VRage/VRage/Voxels/MyStorageData.cs           |   5 +
- 129 files changed, 594 insertions(+), 476 deletions(-)
+ 129 files changed, 597 insertions(+), 476 deletions(-)
  delete mode 100644 Sandbox.Game/app.config
  delete mode 100644 SpaceEngineersDedicated/SpaceEngineersDedicated/WindowsServiceInstaller.cs
  delete mode 100644 SpaceEngineersDedicated/app.config
@@ -1112,10 +1112,18 @@ index 0428a7b..be0aea8 100644
  	}
  
 diff --git a/SpaceEngineersDedicated/SpaceEngineersDedicated.csproj b/SpaceEngineersDedicated/SpaceEngineersDedicated.csproj
-index a3d8330..9ef19c2 100644
+index a3d8330..5697a13 100644
 --- a/SpaceEngineersDedicated/SpaceEngineersDedicated.csproj
 +++ b/SpaceEngineersDedicated/SpaceEngineersDedicated.csproj
-@@ -16,6 +16,7 @@
+@@ -5,6 +5,7 @@
+     <OutputType>WinExe</OutputType>
+     <PlatformTarget>x64</PlatformTarget>
+     <TargetFramework>net8.0-windows</TargetFramework>
++	<RunWorkingDirectory>$(TargetDir)</RunWorkingDirectory>
+   </PropertyGroup>
+   <PropertyGroup>
+     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+@@ -16,6 +17,7 @@
    </PropertyGroup>
    <ItemGroup />
    <ItemGroup>
@@ -1123,7 +1131,7 @@ index a3d8330..9ef19c2 100644
      <ProjectReference Include="..\Sandbox.Game\Sandbox.Game.csproj" />
      <ProjectReference Include="..\SpaceEngineers.Game\SpaceEngineers.Game.csproj" />
      <ProjectReference Include="..\VRage.Dedicated\VRage.Dedicated.csproj" />
-@@ -30,4 +31,7 @@
+@@ -30,4 +32,7 @@
      <Reference Include="System.Core" />
      <Reference Include="System.ServiceProcess" />
    </ItemGroup>
@@ -1277,10 +1285,10 @@ index 07327f1..bc9b41e 100644
  			int num = text.IndexOf('\0');
  			if (num != -1)
 diff --git a/VRage.Dedicated/VRage.Dedicated.csproj b/VRage.Dedicated/VRage.Dedicated.csproj
-index 4d4d2f0..d48173f 100644
+index 4d4d2f0..9787d7f 100644
 --- a/VRage.Dedicated/VRage.Dedicated.csproj
 +++ b/VRage.Dedicated/VRage.Dedicated.csproj
-@@ -15,9 +15,11 @@
+@@ -15,9 +15,12 @@
    </PropertyGroup>
    <ItemGroup />
    <ItemGroup>
@@ -1288,6 +1296,7 @@ index 4d4d2f0..d48173f 100644
      <PackageReference Include="GameAnalytics.Mono.SDK" Version="3.3.5" />
      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 -    <PackageReference Include="RestSharp" Version="112.1.0" />
++    <PackageReference Include="NLog" Version="5.3.4" />
 +    <PackageReference Include="RestSharp" Version="106.6.10" />
 +    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.1" />
      <ProjectReference Include="..\Sandbox.Game\Sandbox.Game.csproj" />
@@ -2403,19 +2412,20 @@ similarity index 100%
 rename from VRage.NativeAftermath/gcroot-System
 rename to VRage.NativeAftermath/gcroot_System.cs
 diff --git a/VRage.Platform.Windows/VRage.Platform.Windows.csproj b/VRage.Platform.Windows/VRage.Platform.Windows.csproj
-index 6366ff2..82837bc 100644
+index 6366ff2..507d599 100644
 --- a/VRage.Platform.Windows/VRage.Platform.Windows.csproj
 +++ b/VRage.Platform.Windows/VRage.Platform.Windows.csproj
-@@ -17,7 +17,7 @@
+@@ -17,7 +17,8 @@
    <ItemGroup>
      <PackageReference Include="DirectShowLib" Version="1.0.0" />
      <PackageReference Include="GameAnalytics.Mono.SDK" Version="3.3.5" />
 -    <PackageReference Include="RestSharp" Version="112.1.0" />
++    <PackageReference Include="NLog" Version="5.3.4" />
 +    <PackageReference Include="RestSharp" Version="106.6.10" />
      <PackageReference Include="SharpDX" Version="4.2.0" />
      <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
      <PackageReference Include="SharpDX.Desktop" Version="4.2.0" />
-@@ -25,6 +25,7 @@
+@@ -25,6 +26,7 @@
      <PackageReference Include="SharpDX.DirectInput" Version="4.2.0" />
      <PackageReference Include="SharpDX.XAudio2" Version="4.2.0" />
      <PackageReference Include="SharpDX.XInput" Version="4.2.0" />
