@@ -1,6 +1,4 @@
-set SolutionDir=%cd%
-dotnet dotnet build --configuration Release
-if %ERRORLEVEL% NEQ 0 goto :end
-dotnet run --configuration Release --project SpaceEngineersDedicated -- -noconsole
-:end
-pause
+@set SolutionDir=%cd%
+@echo The log output goes into a log file in this folder:
+@echo %APPDATA%\SpaceEngineersDedicated
+dotnet run --configuration Release --project SpaceEngineersDedicated -- -noconsole >build.log 2>&1
