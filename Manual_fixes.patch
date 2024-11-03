@@ -1,4 +1,4 @@
-From 641769894f3f3e5fda4a7f26b17d8dc951e4584b Mon Sep 17 00:00:00 2001
+From 543e0e00fb6e19be31ddd578859ca7ec04694785 Mon Sep 17 00:00:00 2001
 From: Viktor Ferenczi <viktor@ferenczi.eu>
 Date: Wed, 30 Oct 2024 15:49:46 +0100
 Subject: [PATCH] Manual fixes
@@ -87,7 +87,7 @@ Subject: [PATCH] Manual fixes
  VRage.Math/VRageMath/GjkD.cs                  |   2 +-
  .../-CrtImplementationDetails-/Progress.cs    |   1 -
  .../-CrtImplementationDetails-/TriBool.cs     |   1 -
- VRage.NativeAftermath/-Module-.cs             | 132 +++++++++++-------
+ VRage.NativeAftermath/-Module-.cs             | 135 +++++++++++-------
  .../GFSDK_Aftermath_Device_Status.cs          |   1 -
  .../GFSDK_Aftermath_FeatureFlags.cs           |   1 -
  .../GFSDK_Aftermath_Result.cs                 |   1 -
@@ -133,7 +133,7 @@ Subject: [PATCH] Manual fixes
  VRage/VRage/Serialization/StaticTypeModel.cs  |  34 -----
  .../VRage/Utils/Keen/MethodInfoExtensions.cs  |  15 ++
  VRage/VRage/Voxels/MyStorageData.cs           |   5 +
- 129 files changed, 597 insertions(+), 476 deletions(-)
+ 129 files changed, 599 insertions(+), 477 deletions(-)
  delete mode 100644 Sandbox.Game/app.config
  delete mode 100644 SpaceEngineersDedicated/SpaceEngineersDedicated/WindowsServiceInstaller.cs
  delete mode 100644 SpaceEngineersDedicated/app.config
@@ -1934,7 +1934,7 @@ index 7eef872..0e44592 100644
  {
  
 diff --git a/VRage.NativeAftermath/-Module-.cs b/VRage.NativeAftermath/-Module-.cs
-index 3bccc18..5cbed10 100644
+index 3bccc18..8603122 100644
 --- a/VRage.NativeAftermath/-Module-.cs
 +++ b/VRage.NativeAftermath/-Module-.cs
 @@ -114,7 +114,7 @@ internal class _003CModule_003E
@@ -2153,7 +2153,7 @@ index 3bccc18..5cbed10 100644
  		}
  		while (pfbegin < pfend);
  	}
-@@ -1063,51 +1097,53 @@ internal class _003CModule_003E
+@@ -1063,51 +1097,54 @@ internal class _003CModule_003E
  		return (delegate*<void*>)_003CCrtImplementationDetails_003E_002EThisModule_002EHandle().ResolveMethodHandle((int)methodToken).GetFunctionPointer().ToPointer();
  	}
  
@@ -2171,6 +2171,7 @@ index 3bccc18..5cbed10 100644
 -		{
 -		}
 -	}
+-
 +	// Marshal.GetExceptionPointers is not supported anymore
 +	//
 +	// [SecurityCritical]
@@ -2187,7 +2188,8 @@ index 3bccc18..5cbed10 100644
 +	// 	{
 +	// 	}
 +	// }
- 
++
++	[DllImport("VRage.Native.dll", CallingConvention = CallingConvention.Cdecl, SetLastError = true)]
  	[MethodImpl(MethodImplOptions.Unmanaged | MethodImplOptions.PreserveSig, MethodCodeType = MethodCodeType.Native)]
  	[SuppressUnmanagedCodeSecurity]
  	internal unsafe static extern void* new_005B_005D(ulong P_0);
@@ -2227,7 +2229,7 @@ index 3bccc18..5cbed10 100644
  	[MethodImpl(MethodImplOptions.Unmanaged, MethodCodeType = MethodCodeType.Native)]
  	[SuppressUnmanagedCodeSecurity]
  	internal unsafe static extern GFSDK_Aftermath_Result GFSDK_Aftermath_DX11_Initialize(GFSDK_Aftermath_Version P_0, GFSDK_Aftermath_FeatureFlags P_1, ID3D11Device* P_2);
-@@ -1120,17 +1156,17 @@ internal class _003CModule_003E
+@@ -1120,17 +1157,17 @@ internal class _003CModule_003E
  	[SuppressUnmanagedCodeSecurity]
  	internal unsafe static extern void* _getFiberPtrId();
  
@@ -2248,7 +2250,7 @@ index 3bccc18..5cbed10 100644
  	[MethodImpl(MethodImplOptions.Unmanaged, MethodCodeType = MethodCodeType.Native)]
  	[SuppressUnmanagedCodeSecurity]
  	internal static extern void abort();
-@@ -1139,7 +1175,7 @@ internal class _003CModule_003E
+@@ -1139,7 +1176,7 @@ internal class _003CModule_003E
  	[SuppressUnmanagedCodeSecurity]
  	internal static extern void __security_init_cookie();
  
